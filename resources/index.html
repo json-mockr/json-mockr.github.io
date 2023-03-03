@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Resources - json-mockr</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Resources";
+        var mkdocs_page_input_path = "resources.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> json-mockr
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../quick-start/">Quick start</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../routes/">Routes</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Resources</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#seed-data">Seed data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#response-customization">Response Customization</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#post">POST</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#put">PUT</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#validation">Validation</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../defaults/">Defaults</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">json-mockr</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>Resources</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="resources">Resources</h1>
+<h2 id="seed-data">Seed data</h2>
+<p>If your configuration only contains routes you will start with an empty set of resources, but you can provide seed data to json-mockr</p>
+<pre><code>routes:
+    - path: "/users"
+    - path: "/users/{id}"
+resources:
+    - name: "users"
+      seed-data-file:/data/users.json
+</code></pre>
+<p>the seed file must be a JSON Array, ex:</p>
+<pre><code class="language-json">[
+  {
+    &quot;name&quot;: &quot;Peter&quot;,
+    &quot;email&quot;: &quot;pete@company.com&quot;,
+    &quot;age&quot;: 45
+  },
+  {
+    &quot;name&quot;: &quot;Mary&quot;,
+    &quot;email&quot;: &quot;mary@company.com&quot;,
+    &quot;age&quot;: 28
+  }
+]
+</code></pre>
+<h2 id="response-customization">Response Customization</h2>
+<p>By default, list responses are arrays</p>
+<pre><code class="language-json">[
+  {
+    &quot;name&quot;: &quot;Peter&quot;,
+    &quot;email&quot;: &quot;pete@company.com&quot;
+  },
+  {
+    &quot;name&quot;: &quot;Mary&quot;,
+    &quot;email&quot;: &quot;mary@company.com&quot;
+  }
+]
+</code></pre>
+<p>you can customize your resource ro return the elements inside an <strong>Envelope</strong> with</p>
+<pre><code>routes:
+    - path: "/users"
+    - path: "/users/{id}"
+resources:
+    - name: "users"
+      envelope: items
+</code></pre>
+<pre><code class="language-json">{
+  &quot;items&quot;: [
+    {
+      &quot;name&quot;: &quot;Peter&quot;,
+      &quot;email&quot;: &quot;pete@company.com&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Mary&quot;,
+      &quot;email&quot;: &quot;mary@company.com&quot;
+    }
+  ]
+}
+</code></pre>
+<p>when using an <strong>Envelope</strong> you can also define a field that will contain the total number of elements returned</p>
+<pre><code>routes:
+    - path: "/users"
+    - path: "/users/{id}"
+resources:
+    - name: "users"
+      envelope: items
+      total-elements: totalCount
+</code></pre>
+<pre><code class="language-json">{
+  &quot;items&quot;: [
+    {
+      &quot;name&quot;: &quot;Peter&quot;,
+      &quot;email&quot;: &quot;pete@company.com&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Mary&quot;,
+      &quot;email&quot;: &quot;mary@company.com&quot;
+    }
+  ],
+  &quot;totalCount&quot;: 2
+}
+</code></pre>
+<h2 id="post">POST</h2>
+<p>POST will generate ids automatically, by default all ids are random Strings and, it's assumed that the name od the id field is <strong>id</strong> (lower case)</p>
+<p>to changes this behaviour you can add the following configuration</p>
+<pre><code>routes:
+    - path: "/users"
+    - path: "/users/{userId}"
+resources:
+    - name: "users"
+      id-field: userId
+      id-type: Number
+      id-length: 6
+</code></pre>
+<p>Possible <strong>Id</strong> types are: <code>String</code>, <code>Number</code></p>
+<h2 id="put">PUT</h2>
+<p>By default, PUT only tries to update existing elements, if you want to allow creation on PUT, the url id will be used and any id on the request body will be ignored</p>
+<pre><code>routes:
+    - path: "/users"
+    - path: "/users/{id}"
+resources:
+    - name: "users"
+      create-on-put: true
+</code></pre>
+<h2 id="validation">Validation</h2>
+<p>If you want to validate the request when doing POST or PUT just add a <strong>Template</strong> to your resource configuration</p>
+<pre><code>routes:
+    - path: "/users"
+    - path: "/users/{id}"
+resources:
+    - name: "users"
+      template:
+        id: String
+        name: String
+        email: String
+        age: Number
+</code></pre>
+<p>json-mockr will return a 400 BAD_REQUEST if the request is invalid</p>
+<p>Possible type values are: <code>String</code>, <code>Number</code>, <code>Boolean</code>, <code>Fractional</code>, <code>Object</code>, <code>Array</code>, <code>Null</code></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../routes/" class="btn btn-neutral float-left" title="Routes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../defaults/" class="btn btn-neutral float-right" title="Defaults">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../routes/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../defaults/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
