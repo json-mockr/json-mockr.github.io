@@ -96,7 +96,7 @@ Add a section <strong>defaults</strong> to your configuration file.</p>
     envelope: items          #default null
     id-field: id             #default id
     id-type: String          #default String
-    id-length: 6             #default 6
+    id-length: 6             #default 4
     total-elements:          #default null
     strict-validation: true  #default false
     create-on-put: false     #default false
@@ -105,10 +105,6 @@ routes:
     - path: "/users"
 resources:
     - name: "users"
-      template:
-          id: String
-          name: String
-          age: Number
 </code></pre>
               
             </div>

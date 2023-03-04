@@ -55,8 +55,6 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="./">Resources</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#seed-data">Seed data</a>
-    </li>
     <li class="toctree-l2"><a class="reference internal" href="#response-customization">Response Customization</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#post">POST</a>
@@ -64,6 +62,10 @@
     <li class="toctree-l2"><a class="reference internal" href="#put">PUT</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#validation">Validation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#seed-data">Seed data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#data-generation-experimental">Data generation (experimental)</a>
     </li>
     </ul>
                 </li>
@@ -96,29 +98,6 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="resources">Resources</h1>
-<h2 id="seed-data">Seed data</h2>
-<p>If your configuration only contains routes you will start with an empty set of resources, but you can provide seed data to json-mockr</p>
-<pre><code>routes:
-    - path: "/users"
-    - path: "/users/{id}"
-resources:
-    - name: "users"
-      seed-data-file:/data/users.json
-</code></pre>
-<p>the seed file must be a JSON Array, ex:</p>
-<pre><code class="language-json">[
-  {
-    &quot;name&quot;: &quot;Peter&quot;,
-    &quot;email&quot;: &quot;pete@company.com&quot;,
-    &quot;age&quot;: 45
-  },
-  {
-    &quot;name&quot;: &quot;Mary&quot;,
-    &quot;email&quot;: &quot;mary@company.com&quot;,
-    &quot;age&quot;: 28
-  }
-]
-</code></pre>
 <h2 id="response-customization">Response Customization</h2>
 <p>By default, list responses are arrays</p>
 <pre><code class="language-json">[
@@ -199,20 +178,89 @@ resources:
       create-on-put: true
 </code></pre>
 <h2 id="validation">Validation</h2>
-<p>If you want to validate the request when doing POST or PUT just add a <strong>Template</strong> to your resource configuration</p>
+<p>json-mockr will use the first element of a collection to validate the following requests.</p>
+<h2 id="seed-data">Seed data</h2>
+<p>If your configuration only contains routes you will start with an empty set of resources, but you can provide seed data to json-mockr</p>
 <pre><code>routes:
     - path: "/users"
     - path: "/users/{id}"
 resources:
     - name: "users"
-      template:
-        id: String
-        name: String
-        email: String
-        age: Number
+      seed-data:
+        file-path: /data/users.json
 </code></pre>
-<p>json-mockr will return a 400 BAD_REQUEST if the request is invalid</p>
-<p>Possible type values are: <code>String</code>, <code>Number</code>, <code>Boolean</code>, <code>Fractional</code>, <code>Object</code>, <code>Array</code>, <code>Null</code></p>
+<p>the seed data must be a JSON Array, ex:</p>
+<pre><code class="language-json">[
+  {
+    &quot;name&quot;: &quot;Peter&quot;,
+    &quot;email&quot;: &quot;pete@company.com&quot;,
+    &quot;age&quot;: 45
+  },
+  {
+    &quot;name&quot;: &quot;Mary&quot;,
+    &quot;email&quot;: &quot;mary@company.com&quot;,
+    &quot;age&quot;: 28
+  }
+]
+</code></pre>
+<p>if your json file is not an array you can point to the field you want to use by defining a <a href="https://www.rfc-editor.org/rfc/rfc6901">JSON-Pointer</a> ex:</p>
+<pre><code>routes:
+    - path: "/users"
+    - path: "/users/{id}"
+resources:
+    - name: "users"
+      seed-data:
+        file-path: /data/users.json
+        json-pointer: "/items"
+</code></pre>
+<p>this will read the <code>items</code> JSON Array:</p>
+<pre><code class="language-json">{
+  &quot;items&quot;: [
+    {
+      &quot;name&quot;: &quot;Peter&quot;,
+      &quot;email&quot;: &quot;pete@company.com&quot;,
+      &quot;age&quot;: 45
+    },
+    {
+      &quot;name&quot;: &quot;Mary&quot;,
+      &quot;email&quot;: &quot;mary@company.com&quot;,
+      &quot;age&quot;: 28
+    }
+  ]
+}
+</code></pre>
+<h2 id="data-generation-experimental">Data generation (experimental)</h2>
+<p>It's possible to generate "Fake Data" to initialize resources by configuring generators and assign them to resources.
+Generators must <strong>always</strong> begin with <code>#</code></p>
+<pre><code>routes:
+    - path: "/users"
+    - path: "/users/{id}"
+resources:
+    - name: "users"
+      generator:
+          name: user-gen
+          quantity: 50
+
+generators:
+    - name: "user-gen"
+      spec: &gt;
+      {  
+          "id": "#number(5)",
+          "name": "#fullName()",
+          "email": "#email()",
+          "age": "#number(2)"
+      }
+</code></pre>
+<p>Available generators:</p>
+<ul>
+<li>text(length: Int)</li>
+<li>number(length: Int)</li>
+<li>name()</li>
+<li>fullName()</li>
+<li>email()</li>
+<li>price(min: Int, max: Int)</li>
+<li>references(resource: String, field: String)</li>
+</ul>
               
             </div>
           </div><footer>
